@@ -1,0 +1,260 @@
+@startuml
+title EcoRide - Diagrama de Clases
+
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package "controller" {
+  class EcoRideController {
+    - ecoRideService: EcoRideService
+    + desbloquear(request: DesbloqueoRequest): DesbloqueoResponse
+    + listarEstaciones(): List<EstacionAnclaje>
+    + finalizarViaje(patente: String): AccionVehiculoResponse
+    + enviarAReparacion(patente: String): AccionVehiculoResponse
+    + pasarAEspera(patente: String): AccionVehiculoResponse
+    + cambiarCriterioTarifa(criterio: String): CambioCriterioTarifaResponse
+    + listarVehiculosPorPrioridadDeCarga(): List<Vehiculo>
+    + depurarReportesGps(request: DepuracionGpsRequest): DepuracionGpsResponse
+  }
+}
+
+package "service" {
+  class EcoRideService {
+    - usuariosPorId: Map<Long, Usuario>
+    - estaciones: List<EstacionAnclaje>
+    - vehiculosPorPatente: Map<String, Vehiculo>
+    - procesadorPagoFactory: ProcesadorPagoFactory
+    - criterioTarifaFactory: CriterioTarifaFactory
+    - criterioTarifaActivo: CriterioTarifa
+    + desbloquear(request: DesbloqueoRequest): DesbloqueoResponse
+    + finalizarViaje(patente: String): AccionVehiculoResponse
+    + enviarAReparacion(patente: String): AccionVehiculoResponse
+    + marcarEnEspera(patente: String): AccionVehiculoResponse
+    + cambiarCriterioTarifa(criterio: String): CambioCriterioTarifaResponse
+    + listarEstaciones(): List<EstacionAnclaje>
+    + listarVehiculosPorPrioridadDeCarga(): List<Vehiculo>
+    + listarVehiculos(): List<Vehiculo>
+    + depurarReportesGps(request: DepuracionGpsRequest): DepuracionGpsResponse
+  }
+}
+
+package "dto" {
+  class DesbloqueoRequest {
+    + idUsuario: Long
+    + patente: String
+    + metodoPago: String
+    + minutosViaje: int
+  }
+
+  class DesbloqueoResponse {
+    + patente: String
+    + tipoVehiculo: String
+    + estadoActual: String
+    + criterioTarifaAplicado: String
+    + montoCobrado: double
+    + mensajePago: String
+  }
+
+  class AccionVehiculoResponse {
+    + patente: String
+    + estadoActual: String
+    + mensaje: String
+  }
+
+  class CambioCriterioTarifaResponse {
+    + criterioActivo: String
+    + mensaje: String
+  }
+
+  class DepuracionGpsRequest {
+    + reportes: List<ReporteGps>
+  }
+
+  class DepuracionGpsResponse {
+    + cantidadOriginal: int
+    + cantidadUnica: int
+    + reportesUnicos: List<ReporteGps>
+  }
+
+  class ErrorResponse {
+    + timestamp: LocalDateTime
+    + status: int
+    + error: String
+    + message: String
+  }
+}
+
+package "model" {
+  class EstacionAnclaje {
+    - numero: Integer
+    - vehiculosDisponibles: List<Vehiculo>
+    + agregarVehiculo(vehiculo: Vehiculo)
+    + buscarVehiculoPorPatente(patente: String): Vehiculo
+  }
+
+  class ReporteGps {
+    + patente: String
+    + latitud: double
+    + longitud: double
+    + timestamp: long
+  }
+}
+
+package "model.usuario" {
+  abstract class Usuario {
+    - id: Long
+    - nombreCompleto: String
+    + aplicarBeneficio(montoBase: double): double
+  }
+
+  class UsuarioRegular
+  class UsuarioPremium {
+    - porcentajeDescuento: double
+  }
+}
+
+package "model.vehiculo" {
+  abstract class Vehiculo {
+    - patente: String
+    - porcentajeBateria: int
+    - tarifaBase: double
+    - estado: EstadoVehiculo
+    + getEstadoActual(): String
+    + puedeSerAlquilado(): boolean
+    + iniciarViaje()
+    + finalizarViaje()
+    + enviarAReparacion()
+    + pasarAEspera()
+    + tieneBateriaSuficiente(): boolean
+    + compareTo(otro: Vehiculo): int
+    + getTipo(): String
+  }
+
+  class Monopatin {
+    - amortiguacionReforzada: boolean
+  }
+
+  class BicicletaElectrica {
+    - capacidadCanastoCm3: int
+  }
+}
+
+package "model.vehiculo.estado" {
+  interface EstadoVehiculo {
+    + iniciarViaje(vehiculo: Vehiculo)
+    + finalizarViaje(vehiculo: Vehiculo)
+    + enviarAReparacion(vehiculo: Vehiculo)
+    + pasarAEspera(vehiculo: Vehiculo)
+    + puedeSerAlquilado(): boolean
+    + getNombre(): String
+  }
+
+  class EnEsperaState
+  class EnViajeState
+  class EnReparacionState
+}
+
+package "model.pago" {
+  interface ProcesadorPago {
+    + cobrar(monto: double): String
+  }
+
+  class TarjetaCreditoProcesador
+  class BilleteraVirtualProcesador
+}
+
+package "strategy.tarifa" {
+  interface CriterioTarifa {
+    + calcularMonto(vehiculo: Vehiculo, minutosViaje: int): double
+    + getNombre(): String
+  }
+
+  class CriterioTarifaEstandar
+  class CriterioTarifaHoraPico
+  class CriterioTarifaTemporalClimatico
+}
+
+package "factory" {
+  class ProcesadorPagoFactory {
+    + crear(metodoPago: String): ProcesadorPago
+  }
+
+  class CriterioTarifaFactory {
+    + crear(criterio: String): CriterioTarifa
+  }
+}
+
+package "exception" {
+  class EcoRideException
+  class UsuarioNoEncontradoException
+  class VehiculoNoEncontradoException
+  class BateriaInsuficienteException
+  class MetodoPagoNoSoportadoException
+  class EstadoVehiculoInvalidoException
+  class GlobalExceptionHandler {
+    + handleNotFound(exception: EcoRideException): ResponseEntity<ErrorResponse>
+    + handleBadRequest(exception: EcoRideException): ResponseEntity<ErrorResponse>
+  }
+}
+
+EcoRideController --> EcoRideService
+
+EcoRideController ..> DesbloqueoRequest
+EcoRideController ..> DesbloqueoResponse
+EcoRideController ..> AccionVehiculoResponse
+EcoRideController ..> CambioCriterioTarifaResponse
+EcoRideController ..> DepuracionGpsRequest
+EcoRideController ..> DepuracionGpsResponse
+EcoRideController ..> EstacionAnclaje
+EcoRideController ..> Vehiculo
+
+EcoRideService --> ProcesadorPagoFactory
+EcoRideService --> CriterioTarifaFactory
+EcoRideService --> CriterioTarifa
+EcoRideService ..> ProcesadorPago
+EcoRideService ..> Usuario
+EcoRideService ..> Vehiculo
+EcoRideService ..> EstacionAnclaje
+EcoRideService ..> ReporteGps
+EcoRideService ..> DesbloqueoRequest
+EcoRideService ..> DesbloqueoResponse
+EcoRideService ..> AccionVehiculoResponse
+EcoRideService ..> CambioCriterioTarifaResponse
+EcoRideService ..> DepuracionGpsRequest
+EcoRideService ..> DepuracionGpsResponse
+
+EstacionAnclaje "1" *-- "0..*" Vehiculo
+
+Usuario <|-- UsuarioRegular
+Usuario <|-- UsuarioPremium
+
+Vehiculo <|-- Monopatin
+Vehiculo <|-- BicicletaElectrica
+Vehiculo --> EstadoVehiculo
+
+EstadoVehiculo <|.. EnEsperaState
+EstadoVehiculo <|.. EnViajeState
+EstadoVehiculo <|.. EnReparacionState
+
+ProcesadorPago <|.. TarjetaCreditoProcesador
+ProcesadorPago <|.. BilleteraVirtualProcesador
+
+CriterioTarifa <|.. CriterioTarifaEstandar
+CriterioTarifa <|.. CriterioTarifaHoraPico
+CriterioTarifa <|.. CriterioTarifaTemporalClimatico
+
+ProcesadorPagoFactory ..> ProcesadorPago
+CriterioTarifaFactory ..> CriterioTarifa
+
+EcoRideException <|-- UsuarioNoEncontradoException
+EcoRideException <|-- VehiculoNoEncontradoException
+EcoRideException <|-- BateriaInsuficienteException
+EcoRideException <|-- MetodoPagoNoSoportadoException
+EcoRideException <|-- EstadoVehiculoInvalidoException
+GlobalExceptionHandler ..> ErrorResponse
+GlobalExceptionHandler ..> EcoRideException
+
+DepuracionGpsRequest --> ReporteGps
+DepuracionGpsResponse --> ReporteGps
+
+@enduml
