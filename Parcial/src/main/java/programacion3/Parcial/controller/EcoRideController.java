@@ -18,7 +18,6 @@ import programacion3.Parcial.model.EstacionAnclaje;
 import programacion3.Parcial.model.vehiculo.Vehiculo;
 import programacion3.Parcial.service.EcoRideService;
 import java.util.List;
-import programacion3.Parcial.dto.AlquilerRequest;
 
 @RestController
 @RequestMapping("/api")

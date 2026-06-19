@@ -81,6 +81,11 @@ public class EcoRideService {
                 mensajePago
         );
     }
+    public AccionVehiculoResponse iniciarViaje(String patente) {
+        Vehiculo vehiculo = buscarVehiculoPorPatente(patente);
+        vehiculo.iniciarViaje();
+        return new AccionVehiculoResponse(vehiculo.getPatente(), vehiculo.getEstadoActual(), "Viaje iniciado.");
+    }
 
     public AccionVehiculoResponse finalizarViaje(String patente) {
         Vehiculo vehiculo = buscarVehiculoPorPatente(patente);
