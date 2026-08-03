@@ -1,0 +1,268 @@
+{
+	"info": {
+		"_postman_id": "6d95b918-7e00-4d9e-9c55-e55cbe1aad86",
+		"name": "ExamenFinal",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "54464881",
+		"_collection_link": "https://valenchess123-725825.postman.co/workspace/Ana-Valentina-Rodriguez's-Works~b1e0c0b7-ce28-4db9-8089-81192d6e1a62/collection/54464881-6d95b918-7e00-4d9e-9c55-e55cbe1aad86?action=share&source=collection_link&creator=54464881"
+	},
+	"item": [
+		{
+			"name": "MaterialesDisponibles",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/BiblioExpress/api/materiales/disponibles",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"BiblioExpress",
+						"api",
+						"materiales",
+						"disponibles"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "MaterialesDisp",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/BiblioExpress/api/materiales/disponibles",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"BiblioExpress",
+								"api",
+								"materiales",
+								"disponibles"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "194"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 03 Aug 2026 12:46:37 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"codigo\": \"L001\",\n        \"disponible\": true,\n        \"titulo\": \"El Quijote\"\n    },\n    {\n        \"codigo\": \"L002\",\n        \"disponible\": true,\n        \"titulo\": \"Cien Años de Soledad\"\n    },\n    {\n        \"codigo\": \"R001\",\n        \"disponible\": true,\n        \"titulo\": \"Revista de Ciencia\"\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\n    [{\"id\":1,\"nombre\":\"Juan Pérez\",\"premium\":true},\n    {\"id\":2,\"nombre\":\"María Gómez\",\"premium\":false},\n    {\"id\":1,\"nombre\":\"Juan Pérez\",\"premium\":true}]\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/BiblioExpress/api/socios/depurar-duplicados",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"BiblioExpress",
+						"api",
+						"socios",
+						"depurar-duplicados"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "DepurarDupl",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\n    [{\"id\":1,\"nombre\":\"Juan Pérez\",\"premium\":true},\n    {\"id\":2,\"nombre\":\"María Gómez\",\"premium\":false},\n    {\"id\":1,\"nombre\":\"Juan Pérez\",\"premium\":true}]\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/BiblioExpress/api/socios/depurar-duplicados",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"BiblioExpress",
+								"api",
+								"socios",
+								"depurar-duplicados"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "98"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 03 Aug 2026 12:50:12 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"id\": 1,\n        \"nombre\": \"Juan Pérez\",\n        \"premium\": true\n    },\n    {\n        \"id\": 2,\n        \"nombre\": \"María Gómez\",\n        \"premium\": false\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Prestar",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Devolver",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"codigoMaterial\":\"L001\",\"idSocio\":1}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/BiblioExpress/api/prestamos/devolver",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"BiblioExpress",
+						"api",
+						"prestamos",
+						"devolver"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "New Request",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"codigoMaterial\":\"L001\",\"idSocio\":1}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/BiblioExpress/api/prestamos/devolver",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"BiblioExpress",
+								"api",
+								"prestamos",
+								"devolver"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "68"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 03 Aug 2026 12:58:02 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"mensaje\": \"Material devuelto con éxito\",\n    \"multa\": 250,\n    \"idSocio\": 1\n}"
+				}
+			]
+		}
+	]
+}
