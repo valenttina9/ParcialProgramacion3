@@ -17,9 +17,16 @@ public class ProcesadorStrategy {
         estrategias.put("FinDeSemana", new MultaFinDeSemana());
     }
 
-    public double calcularMulta(CalculoMulta estrategia, int diasRetraso, boolean premium) {
+    // resuelve la estrategia de multa a aplicar según el tipo (Normal, FinDeSemana, Compania)
+    public double calcularMulta(String tipoEstrategia, int diasRetraso, boolean premium) {
+        CalculoMulta estrategia;
+        if (estrategias.containsKey(tipoEstrategia)) {
+            estrategia = estrategias.get(tipoEstrategia);
+        } else {
+            estrategia = estrategias.get("Normal");
+        }
         return estrategia.calcularMulta(diasRetraso, premium);
     }
-    
+
     }
 
